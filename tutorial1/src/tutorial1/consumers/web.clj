@@ -1,6 +1,6 @@
 (ns tutorial1.consumers.web
   (:require [schema.core :as s]
-            [aleph.http.server :as http]
+            [aleph.http :as http]
             [compojure
              [core :refer :all]
              [handler :as handler]
@@ -23,24 +23,25 @@
 
 (s/defn api-routes
   [file :- s/Str]
-  (routes
-    (GET "/random" []
-      ;; if there are quips
-      #_ {:status 200
-          :body {:quip "<<Random Quip Goes here>>"}}
-      ;; if there are no quips
-      #_ {:status 200
-          :body {}})
-    (GET "/count" []
-      #_ {:status 200
-          :body {:count -1}})
-    (POST "/" [:as req]
-      (let [quip (get-in req [:body :quip])]
-        #_ {:status 201
-            :body quip}))
-    (DELETE "/" []
-      {:status 204})
-    (route/not-found nil)))
+  (context "/quips" []
+    (routes
+      (GET "/random" []
+        ;; if there are quips
+        #_ {:status 200
+            :body {:quip "<<Random Quip Goes here>>"}}
+        ;; if there are no quips
+        #_ {:status 200
+            :body {}})
+      (GET "/count" []
+        #_ {:status 200
+            :body {:count -1}})
+      (POST "/" [:as req]
+        (let [quips (get-in req [:body :quips])]
+          #_ {:status 201
+              :body {:quips [quips]}}))
+      (DELETE "/" []
+        {:status 204})
+      (route/not-found nil))))
 
 (s/defn app
   [file :- s/Str]

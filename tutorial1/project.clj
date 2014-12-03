@@ -10,5 +10,6 @@
                  [aleph "0.4.0-alpha9"]
                  [ring "1.3.2"]
                  [ring/ring-json "0.3.1"]
-                 [compojure "1.2.2"]]
+                 [compojure "1.2.2"]
+                 [clj-http "1.0.1"]]
   :main tutorial1.core)
