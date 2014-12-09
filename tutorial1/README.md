@@ -21,7 +21,7 @@ or, if you're in development mode
 
 ## Routes
 
-`POST /quips`
+### `POST /quips`
 
 Takes a JSON object of quips to create.
 
@@ -51,7 +51,7 @@ Takes a JSON object of quips to create.
 ```
 
 
-`GET /quips/random`
+### `GET /quips/random`
 
 Returns a random quip (or empty if none avail)
 
@@ -64,7 +64,7 @@ Returns a random quip (or empty if none avail)
 }
 ```
 
-`GET /quips/count`
+### `GET /quips/count`
 
 Returns the number of quips stored.
 
@@ -77,7 +77,7 @@ Returns the number of quips stored.
 }
 ```
 
-`DELETE /quips`
+### `DELETE /quips`
 
 Drops the current database of quips.
 
@@ -86,3 +86,8 @@ Drops the current database of quips.
 **Response**:
 
 *HTTP 204*
+
+
+## Learning Resources
+
+You should read about [Compojure](https://github.com/weavejester/compojure/wiki) and [Ring](https://github.com/ring-clojure/ring/wiki).
