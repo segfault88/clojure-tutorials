@@ -6,14 +6,14 @@
 
 (use-fixtures :once st/validate-schemas)
 
-(defn test-main
+#_(defn test-main
   [args]
   (->> args
        (apply core/-main)
        with-out-str
        str/trim-new-line))
 
-(deftest help-is-shown
+#_(deftest help-is-shown
   ())
 
 (run-all-tests)

@@ -1,13 +1,13 @@
 (ns tutorial1.consumers.web
   (:require [schema.core :as s]
-            [aleph.http :as http]
+            [org.httpkit.server :as server]
             [compojure
              [core :refer :all]
              [handler :as handler]
              [route :as route]]
             [ring.middleware.json :as json]
             [tutorial1.producers.file :as file])
-  (:import [com.fasterxml.jackson.core JsonGenerationException JsonParseException]))
+  (:import com.fasterxml.jackson.core.JsonGenerationException))
 
 (defn gulp-errors
   [handler]
@@ -16,42 +16,20 @@
       (handler req)
       (catch JsonGenerationException e
         {:status 500 :body {:error "Unknown error occurred"}})
-      (catch JsonParseException e
-        {:status 400 :body {:error "Malformed JSON"}})
       (catch Exception e
         {:status 500 :body {:error (str e)}}))))
 
-(s/defn api-routes
-  [file :- s/Str]
-  (context "/quips" []
-    (routes
-      (GET "/random" []
-        ;; if there are quips
-        #_ {:status 200
-            :body {:quip "<<Random Quip Goes here>>"}}
-        ;; if there are no quips
-        #_ {:status 200
-            :body {}})
-      (GET "/count" []
-        #_ {:status 200
-            :body {:count -1}})
-      (POST "/" [:as req]
-        (let [quips (get-in req [:body :quips])]
-          #_ {:status 201
-              :body {:quips [quips]}}))
-      (DELETE "/" []
-        {:status 204})
-      (route/not-found nil))))
+(defn api-routes [file]
+  #_ (INSERT ROUTES HERE))
 
-(s/defn app
-  [file :- s/Str]
-  (-> api-routes
+(defn app [file]
+  (-> (api-routes file)
       handler/api
       (json/wrap-json-body {:keywords? true})
-      json/wrap-json-response
-      gulp-errors))
+      gulp-errors
+      json/wrap-json-response))
 
 (s/defn start
   [port :- s/Int
    file :- s/Str]
-  (http/start-server (app file) {:port port}))
+  (server/run-server (app file) {:port port}))

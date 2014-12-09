@@ -12,8 +12,9 @@
 (def url (format "http://localhost:%s/quips" test-port))
 
 (defn rest-fixture [f]
-  (with-open [_ (web/start test-port test-file)]
-    (f)))
+  (let [server (web/start test-port test-file)]
+    (f)
+    (server)))
 
 (use-fixtures :once st/validate-schemas)
 (use-fixtures :each rest-fixture)
@@ -25,20 +26,35 @@
 
 (def default-options
   {:as :json
+   :coerce :always
    :throw-exceptions false})
 
+(defn parse-response [response]
+  (select-keys response [:body :status]))
+
 (defn add-quips [& args]
-  (http/post url (merge default-options
-                        {:body (generate-string (apply quips args))})))
+  (-> url
+      (http/post (merge default-options
+                        {:content-type :json
+                         :body (generate-string (apply quips args))}))
+      parse-response))
 
 (defn random-quip []
-  (http/get (str url "/random") default-options))
+  (-> url
+      (str "/random")
+      (http/get default-options)
+      parse-response))
 
 (defn drop-quips []
-  (http/delete url default-options))
+  (-> url
+      (http/delete default-options)
+      parse-response))
 
 (defn count-quips []
-  (http/get (str url "/count") default-options))
+  (-> url
+      (str "/count")
+      (http/get default-options)
+      parse-response))
 
 ;; constants
 
@@ -48,23 +64,23 @@
 
 ;; tests
 
-(testing "Should be able to add a quip"
+(deftest test-add-quip
   (is (= (add-quips quip) {:status 201 :body (quips quip)})))
 
-(testing "Should be able to get the quip"
+(deftest test-random-quip
   (is (= (add-quips quip) {:status 201 :body (quips quip)}))
   (is (= (random-quip) {:status 200 :body {:quip quip}})))
 
-(testing "Should be able to drop all existing quips"
+(deftest test-drop-quips
   (is (= (add-quips quip) {:status 201 :body (quips quip)}))
   (is (= (drop-quips) {:status 204}))
   (is (= (random-quip) {:status 200 :body {}})))
 
-(testing "Should be able to add a multiline quip"
+#_(testing "Should be able to add a multiline quip"
   (is (= (add-quips mquip) {:status 201 :body (quips mquip)}))
   (is (= (random-quip) {:status 200 :body mquip})))
 
-(testing "Should be able to get all quips in store"
+#_(testing "Should be able to get all quips in store"
   (let [all-quips #{quips mquip}]
     (is (= (apply add-quips all-quips)
            {:status 201 :body (apply quips all-quips)}))
@@ -75,7 +91,7 @@
                          (recur (conj seen-quips (random-quip)) (dec counter))))]
       (is (= seen-quips all-quips)))))
 
-(testing "Should be able to get a quip count"
+#_(testing "Should be able to get a quip count"
   (is (= (add-quips quip mquip "Third quip")
          {:status 200 :body (quips quip mquip "Third quip")}))
   (is (= (count-quips)
