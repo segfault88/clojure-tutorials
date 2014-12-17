@@ -76,12 +76,12 @@
   (is (= (drop-quips) {:status 204}))
   (is (= (random-quip) {:status 200 :body {}})))
 
-#_(testing "Should be able to add a multiline quip"
+(deftest test-multiline-quip
   (is (= (add-quips mquip) {:status 201 :body (quips mquip)}))
   (is (= (random-quip) {:status 200 :body mquip})))
 
-#_(testing "Should be able to get all quips in store"
-  (let [all-quips #{quips mquip}]
+(deftest test-get-all-quips
+  (let [all-quips #{quip mquip}]
     (is (= (apply add-quips all-quips)
            {:status 201 :body (apply quips all-quips)}))
     (let [seen-quips (loop [seen-quips #{}
@@ -91,7 +91,7 @@
                          (recur (conj seen-quips (random-quip)) (dec counter))))]
       (is (= seen-quips all-quips)))))
 
-#_(testing "Should be able to get a quip count"
+(deftest test-count-quips
   (is (= (add-quips quip mquip "Third quip")
          {:status 200 :body (quips quip mquip "Third quip")}))
   (is (= (count-quips)
