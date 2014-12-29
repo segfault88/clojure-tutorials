@@ -4,11 +4,11 @@
   :profiles {:uberjar {:aot :all
                        :uberjar-name "tutorial1.jar"}}
   :dependencies [[prismatic/schema "0.3.3"]
-                 [org.clojure/clojure "1.6.0"]
+                 [org.clojure/clojure "1.7.0-alpha4"]
                  [org.clojure/tools.cli "0.3.1"]
-                 [http-kit "2.1.16"]
+                 [http-kit "2.1.19-snapshot"]
                  [ring "1.3.2"]
                  [ring/ring-json "0.3.1"]
-                 [compojure "1.2.2"]
+                 [compojure "1.3.1"]
                  [clj-http "1.0.1"]]
   :main tutorial1.core)
