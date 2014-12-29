@@ -2,3 +2,7 @@
   (:require [schema.core :as s]))
 
 ;; your code goes here
+
+(defn wtf
+  []
+  7)
