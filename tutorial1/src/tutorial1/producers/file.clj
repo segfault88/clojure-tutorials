@@ -3,6 +3,16 @@
             [clojure.java.io :as io]
             [clojure.string :as str]))
 
+(defn file-exists?
+  [file]
+  (.exists (io/as-file file)))
+
+(defn qslurp
+  [file]
+  (if (file-exists? file)
+    (slurp file)
+    ""))
+
 (defn escape-newlines
   [quip]
   (str/replace quip #"[\n]+" "\\\\n"))
@@ -22,16 +32,17 @@
 
 (defn get-quip
   [file]
-  (unescape-newlines (rand-nth (str/split (slurp file) #"\n"))))
+  (unescape-newlines (rand-nth (str/split (qslurp file) #"\n"))))
 
 (defn all-quips
   [file]
-  (map #(unescape-newlines %) (str/split (slurp file) #"\n")))
+  (map #(unescape-newlines %) (str/split (qslurp file) #"\n")))
 
 (defn count-quips
   [file]
-  (count (str/split (slurp file) #"\n")))
+  (count (str/split (qslurp file) #"\n")))
 
 (defn drop-quips
   [file]
-  (io/delete-file file true))
+  (if (file-exists? file)
+    (io/delete-file file true)))
