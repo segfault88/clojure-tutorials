@@ -16,4 +16,5 @@
 #_(deftest help-is-shown
   ())
 
-(run-all-tests)
+;;(run-all-tests)
+

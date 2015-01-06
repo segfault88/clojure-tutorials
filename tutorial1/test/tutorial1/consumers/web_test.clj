@@ -97,4 +97,5 @@
   (is (= (count-quips)
          {:status 200 :body {:count 3}})))
 
-(run-all-tests)
+;;(run-all-tests)
+
