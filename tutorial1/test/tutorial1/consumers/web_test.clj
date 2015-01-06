@@ -17,7 +17,7 @@
     (server)))
 
 (use-fixtures :once st/validate-schemas)
-(use-fixtures :each rest-fixture)
+(use-fixtures :once rest-fixture)
 
 ;; helper functions
 
@@ -56,6 +56,13 @@
       (http/get default-options)
       parse-response))
 
+(defn clean-up-fixture
+  [f]
+  (drop-quips)
+  (f))
+
+(use-fixtures :each clean-up-fixture)
+
 ;; constants
 
 (def quip "If at first you don't succeed... so much for skydiving.")
@@ -73,12 +80,12 @@
 
 (deftest test-drop-quips
   (is (= (add-quips quip) {:status 201 :body (quips quip)}))
-  (is (= (drop-quips) {:status 204}))
+  (is (= (drop-quips) {:status 204 :body nil}))
   (is (= (random-quip) {:status 200 :body {}})))
 
 (deftest test-multiline-quip
   (is (= (add-quips mquip) {:status 201 :body (quips mquip)}))
-  (is (= (random-quip) {:status 200 :body mquip})))
+  (is (= (random-quip) {:status 200 :body {:quip mquip}})))
 
 (deftest test-get-all-quips
   (let [all-quips #{quip mquip}]
@@ -88,14 +95,12 @@
                             counter 1000]
                        (if (or (zero? counter) (= all-quips seen-quips))
                          seen-quips
-                         (recur (conj seen-quips (random-quip)) (dec counter))))]
+                         (recur (conj seen-quips (get-in (random-quip) [:body :quip])) (dec counter))))]
       (is (= seen-quips all-quips)))))
 
 (deftest test-count-quips
   (is (= (add-quips quip mquip "Third quip")
-         {:status 200 :body (quips quip mquip "Third quip")}))
+         {:status 201 :body (quips quip mquip "Third quip")}))
   (is (= (count-quips)
          {:status 200 :body {:count 3}})))
-
-;;(run-all-tests)
 
