@@ -32,7 +32,9 @@
 
 (defn get-quip
   [file]
-  (unescape-newlines (rand-nth (str/split (qslurp file) #"\n"))))
+  (if (file-exists? file)
+    (unescape-newlines (rand-nth (str/split (qslurp file) #"\n")))
+    nil))
 
 (defn all-quips
   [file]
