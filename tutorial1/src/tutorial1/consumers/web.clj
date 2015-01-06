@@ -19,8 +19,33 @@
       (catch Exception e
         {:status 500 :body {:error (str e)}}))))
 
+(defn json-response
+  ([data]
+   (json-response data 200))
+  ([data status]
+   {:status status
+    :body data}))
+
+(defn add-quip-route
+  [file req]
+  (let [quips (-> req :body :quips)]
+    (doseq [quip quips]
+      (pr-str quip)
+      (file/add-quip file quip))
+    (json-response {:quips quips} 201)))
+
+(defn random-route
+  [file]
+  (json-response
+   (if-let [quip (file/get-quip file)]
+     {:quip quip}
+     {})))
+
 (defn api-routes [file]
-  #_ (INSERT ROUTES HERE))
+  (routes
+   (context "/quips" []
+            (POST "/" [:as req] (add-quip-route file req))
+            (GET "/random" [] (random-route file)))))
 
 (defn app [file]
   (-> (api-routes file)
