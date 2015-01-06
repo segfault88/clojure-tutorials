@@ -45,12 +45,19 @@
   (json-response
    {:count (file/count-quips file)}))
 
+(defn delete-route
+  [file]
+  (file/drop-quips file)
+  {:status 204})
+
 (defn api-routes [file]
   (routes
    (context "/quips" []
             (POST "/" [:as req] (add-quip-route file req))
             (GET "/count" [] (count-route file))
-            (GET "/random" [] (random-route file)))))
+            (GET "/random" [] (random-route file))
+            (DELETE "/" [] (delete-route file))
+            (route/not-found "<h1>This is not the page you're looking for... Move along...</h1>"))))
 
 (defn app [file]
   (-> (api-routes file)
