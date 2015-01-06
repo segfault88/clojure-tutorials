@@ -30,7 +30,6 @@
   [file req]
   (let [quips (-> req :body :quips)]
     (doseq [quip quips]
-      (pr-str quip)
       (file/add-quip file quip))
     (json-response {:quips quips} 201)))
 
@@ -41,10 +40,16 @@
      {:quip quip}
      {})))
 
+(defn count-route
+  [file]
+  (json-response
+   {:count (file/count-quips file)}))
+
 (defn api-routes [file]
   (routes
    (context "/quips" []
             (POST "/" [:as req] (add-quip-route file req))
+            (GET "/count" [] (count-route file))
             (GET "/random" [] (random-route file)))))
 
 (defn app [file]
