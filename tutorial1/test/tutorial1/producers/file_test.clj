@@ -65,5 +65,10 @@
   (file/drop-quips test-file)
   (is (= (io/delete-file test-file :silent true) :silent)))
 
+(deftest count-quips
+  []
+  (dotimes [n 42] (file/add-quip test-file mquip))
+  (is (= (file/count-quips test-file) 42)))
+
 ;;(run-all-tests)
 

@@ -28,6 +28,10 @@
   [file]
   (map #(unescape-newlines %) (str/split (slurp file) #"\n")))
 
+(defn count-quips
+  [file]
+  (count (str/split (slurp file) #"\n")))
+
 (defn drop-quips
   [file]
   (io/delete-file file :silent true))
