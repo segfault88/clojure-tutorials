@@ -18,11 +18,9 @@
 (defn clean-up-fixture
   "Wrap a fixture around the test file that ensures that the test file is cleaned up"
   [f]
-  (println "BEFORE")
   (delete-test-file)
   (f)
-  (delete-test-file)
-  (println "BEFORE"))
+  (delete-test-file))
 
 (use-fixtures :each clean-up-fixture)
 
