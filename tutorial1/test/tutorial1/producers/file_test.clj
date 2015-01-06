@@ -63,7 +63,7 @@
   []
   (spit test-file "there is stuff here")
   (file/drop-quips test-file)
-  (is (= (io/delete-file test-file :silent true) :silent)))
+  (is (= (io/delete-file test-file :silent) :silent)))
 
 (deftest count-quips
   []

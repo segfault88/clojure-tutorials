@@ -34,4 +34,4 @@
 
 (defn drop-quips
   [file]
-  (io/delete-file file :silent true))
+  (io/delete-file file true))

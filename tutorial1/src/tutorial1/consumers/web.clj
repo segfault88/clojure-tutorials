@@ -30,7 +30,7 @@
   [file req]
   (let [quips (-> req :body :quips)]
     (doseq [quip quips]
-      (file/add-quip file quip))
+      (file/add-quip file (:quip quip)))
     (json-response {:quips quips} 201)))
 
 (defn random-route
@@ -57,7 +57,8 @@
             (GET "/count" [] (count-route file))
             (GET "/random" [] (random-route file))
             (DELETE "/" [] (delete-route file))
-            (route/not-found "<h1>This is not the page you're looking for... Move along...</h1>"))))
+            (route/not-found
+             "<h1>This is not the page you're looking for... Move along...</h1>"))))
 
 (defn app [file]
   (-> (api-routes file)
