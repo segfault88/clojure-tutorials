@@ -51,9 +51,21 @@
   (file/add-quip test-file quip)
   (is (= (file/get-quip test-file) quip)))
 
+(deftest get-all-quips
+  []
+  (spit test-file (str/join [emquip "\n" emquip "\n"]))
+  (is (= (file/all-quips test-file) [mquip mquip])))
+
 (deftest get-multiline-quip
   []
   (file/add-quip test-file mquip)
   (is (= (file/get-quip test-file) mquip)))
+
+(deftest drop-quips
+  []
+  (spit test-file "there is stuff here")
+  (file/drop-quips test-file)
+  (is (= (io/delete-file test-file :silent true) :silent)))
+
 ;;(run-all-tests)
 

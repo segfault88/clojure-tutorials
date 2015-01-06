@@ -1,5 +1,6 @@
 (ns tutorial1.producers.file
   (:require [schema.core :as s]
+            [clojure.java.io :as io]
             [clojure.string :as str]))
 
 (defn escape-newlines
@@ -22,3 +23,11 @@
 (defn get-quip
   [file]
   (unescape-newlines (rand-nth (str/split (slurp file) #"\n"))))
+
+(defn all-quips
+  [file]
+  (map #(unescape-newlines %) (str/split (slurp file) #"\n")))
+
+(defn drop-quips
+  [file]
+  (io/delete-file file :silent true))
