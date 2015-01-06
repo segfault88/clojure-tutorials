@@ -21,4 +21,4 @@
 
 (defn get-quip
   [file]
-  (escape-newlines (rand-nth (str/split (slurp file) #"\n"))))
+  (unescape-newlines (rand-nth (str/split (slurp file) #"\n"))))
