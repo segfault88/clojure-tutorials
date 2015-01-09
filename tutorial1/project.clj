@@ -10,5 +10,6 @@
                  [ring "1.3.2"]
                  [ring/ring-json "0.3.1"]
                  [compojure "1.3.1"]
-                 [clj-http "1.0.1"]]
+                 [clj-http "1.0.1"]
+                 [com.cognitect/transit-clj "0.8.259"]]
   :main tutorial1.core)
