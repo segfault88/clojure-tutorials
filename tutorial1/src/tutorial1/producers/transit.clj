@@ -3,7 +3,8 @@
             [clojure.java.io :as io]
             [clojure.string :as str]
             [cognitect.transit :as transit])
-  (:import [java.io FileInputStream FileOutputStream]))
+  (:import [java.io FileInputStream FileOutputStream]
+           [tutorial1.producers Producer]))
 
 (defn file-exists?
   [file]
@@ -22,6 +23,30 @@
   (let [out (FileOutputStream. file false) ;; do not append, overwrite
         writer (transit/writer out :msgpack)]
     (transit/write writer {:quips quips})))
+
+
+(deftype TransitProducer []
+  Producer
+  (add-quip
+    [file quip]
+    )
+  
+  (get-quip
+    [file]
+    )
+  
+  (all-quips
+    [file]
+    )
+
+  (count-quips
+    [file]
+    )
+  
+  (drop-quips
+    [file]
+    ))
+
 
 (defn add-quip
   [file quip]

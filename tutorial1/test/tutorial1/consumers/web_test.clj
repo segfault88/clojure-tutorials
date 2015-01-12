@@ -9,10 +9,11 @@
 
 (def test-file "quipper_test_file.txt")
 (def test-port 4444)
+(def test-producer "transit")
 (def url (format "http://localhost:%s/quips" test-port))
 
 (defn rest-fixture [f]
-  (let [server (web/start test-port test-file)]
+  (let [server (web/start test-port test-file test-producer)]
     (f)
     (server)))
 
