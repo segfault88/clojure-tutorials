@@ -9,6 +9,9 @@
   [["-h" "--help"]
    ["-f" "--file PATH" "The file to store quips in"
     :default (format "%s/.quips" (System/getProperty "user.home"))]
+   ["-o" "--producer PRODUCER" "The format to store the quip file in, file or transit."
+    :default "transit"
+    :validate-fn #(contains? #{"file" "transit"} %)]
    ["-p" "--port PORT" "The port for the web service to listen on"
     :default 8080
     :parse-fn #(Integer. ^String %)]])
@@ -25,7 +28,8 @@
 (s/defn -main
   [& args :- [s/Str]]
   (let [{:keys [options arguments summary errors]} (cli/parse-opts args cli-options)
-        {:keys [help port file]} options]
+        {:keys [help port file producer]} options]
+    (println producer)
     (cond
       help (do (println summary)
                (System/exit 0))
@@ -34,4 +38,4 @@
                                  (System/exit 1))
       :else nil)
     (println (format "Starting Quipper REST API on port %s" port))
-    (web/start port file)))
+    (web/start port file producer)))

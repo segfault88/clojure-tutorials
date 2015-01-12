@@ -6,7 +6,8 @@
              [handler :as handler]
              [route :as route]]
             [ring.middleware.json :as json]
-            [tutorial1.producers.file :as file])
+            [tutorial1.producers.file :as file]
+            [tutorial1.producers.transit :as transit])
   (:import com.fasterxml.jackson.core.JsonGenerationException))
 
 (defn gulp-errors
@@ -27,41 +28,41 @@
     :body data}))
 
 (defn add-quip-route
-  [file req]
+  [producer req]
   (let [quips (-> req :body :quips)]
     (doseq [quip quips]
-      (file/add-quip file (:quip quip)))
+      (producer/add-quip file (:quip quip)))
     (json-response {:quips quips} 201)))
 
 (defn random-route
-  [file]
+  [producer]
   (json-response
-   (if-let [quip (file/get-quip file)]
+   (if-let [quip (producer/get-quip file)]
      {:quip quip}
      {})))
 
 (defn count-route
-  [file]
+  [producer]
   (json-response
-   {:count (file/count-quips file)}))
+   {:count (producer/count-quips file)}))
 
 (defn delete-route
   [file]
-  (file/drop-quips file)
+  (producer/drop-quips file)
   {:status 204})
 
-(defn api-routes [file]
+(defn api-routes [producer]
   (routes
    (context "/quips" []
-            (POST "/" [:as req] (add-quip-route file req))
-            (GET "/count" [] (count-route file))
-            (GET "/random" [] (random-route file))
-            (DELETE "/" [] (delete-route file))
+            (POST "/" [:as req] (add-quip-route producer req))
+            (GET "/count" [] (count-route producer))
+            (GET "/random" [] (random-route producer))
+            (DELETE "/" [] (delete-route producer))
             (route/not-found
              "<h1>This is not the page you're looking for... Move along...</h1>"))))
 
-(defn app [file]
-  (-> (api-routes file)
+(defn app [producer]
+  (-> (api-routes producer)
       handler/api
       (json/wrap-json-body {:keywords? true})
       gulp-errors
@@ -69,5 +70,9 @@
 
 (s/defn start
   [port :- s/Int
-   file :- s/Str]
-  (server/run-server (app file) {:port port}))
+   file :- s/Str
+   producer-name :- s/Str]
+  (let [producer (case producer-name
+                   "transit" transit
+                   "file" file)]
+    (server/run-server (app producer) {:port port})))
