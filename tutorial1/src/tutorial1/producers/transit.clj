@@ -19,7 +19,7 @@
 
 (defn write-quips
   [file quips]
-  (let [out (FileOutputStream. file false)
+  (let [out (FileOutputStream. file false) ;; do not append, overwrite
         writer (transit/writer out :msgpack)]
     (transit/write writer {:quips quips})))
 
