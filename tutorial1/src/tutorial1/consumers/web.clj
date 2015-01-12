@@ -73,6 +73,6 @@
    file :- s/Str
    producer-name :- s/Str]
   (let [producer (case producer-name
-                   "transit" transit
-                   "file" file)]
+                   "transit" (TransitProducer.)
+                   "file" (TransitProducer.))]
     (server/run-server (app producer) {:port port})))

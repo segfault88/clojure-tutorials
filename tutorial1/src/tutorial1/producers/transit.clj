@@ -2,9 +2,9 @@
   (:require [schema.core :as s]
             [clojure.java.io :as io]
             [clojure.string :as str]
-            [cognitect.transit :as transit])
-  (:import [java.io FileInputStream FileOutputStream]
-           [tutorial1.producers Producer]))
+            [cognitect.transit :as transit]
+            [tutorial1.producers.producer])
+  (:import [java.io FileInputStream FileOutputStream]))
 
 (defn file-exists?
   [file]
@@ -25,48 +25,36 @@
     (transit/write writer {:quips quips})))
 
 
-(deftype TransitProducer []
+(defprotocol Producer
+  "A basic quip producer"
+  (add-quip [this quip])
+  (get-quip [this])
+  (all-quips [this])
+  (count-quips [this])
+  (drop-quips [this]))
+
+(deftype TransitProducer [file]
   Producer
+  
   (add-quip
-    [file quip]
-    )
+    [this quip]
+    (write-quips file (conj (read-quips file) quip)))
   
   (get-quip
-    [file]
-    )
+    [this]
+    (if (file-exists? file)
+      (rand-nth (read-quips file))
+      nil))
   
   (all-quips
-    [file]
-    )
+    [this]
+    (read-quips file))
 
   (count-quips
-    [file]
-    )
+    [this]
+    (count (read-quips file)))
   
   (drop-quips
-    [file]
-    ))
-
-
-(defn add-quip
-  [file quip]
-  (write-quips file (conj (read-quips file) quip)))
-
-(defn get-quip
-  [file]
-  (if (file-exists? file)
-    (rand-nth (read-quips file))
-    nil))
-
-(defn all-quips
-  [file]
-  (read-quips file))
-
-(defn count-quips
-  [file]
-  (count (read-quips file)))
-
-(defn drop-quips
-  [file]
-  (if (file-exists? file)
-    (io/delete-file file true)))
+    [this]
+    (if (file-exists? file)
+      (io/delete-file file true))))
