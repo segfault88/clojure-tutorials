@@ -3,7 +3,10 @@
             [clojure.java.io :as io]
             [clojure.string :as str]
             [cognitect.transit :as transit]
-            [tutorial1.producers :refer [Producer]])
+            ;; [tutorial1.producers :refer [Producer]]
+            ;; [tutorial1.producers :as producers]
+            [tutorial1.producers.producer :as producer]
+)
   (:import [java.io FileInputStream FileOutputStream]))
 
 (defn file-exists?
@@ -25,7 +28,7 @@
     (transit/write writer {:quips quips})))
 
 (deftype TransitProducer [file]
-  Producer
+  producer/Producer
   (add-quip
     [this quip]
     (write-quips file (conj (read-quips file) quip)))
