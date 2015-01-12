@@ -6,8 +6,8 @@
              [handler :as handler]
              [route :as route]]
             [ring.middleware.json :as json]
-            [tutorial1.producers :refer [Producer]]
-            [tutorial1.producers.transit :refer [TransitProducer]])
+            ;; [tutorial1.producers :refer [Producer]]
+            [tutorial1.producers :refer :all])
   (:import com.fasterxml.jackson.core.JsonGenerationException))
 
 (defn gulp-errors
@@ -30,25 +30,25 @@
 (defn add-quip-route
   [producer req]
   (let [quips (-> req :body :quips)]
-    ;; (doseq [quip quips]
-      ;; (producer/add-quip file (:quip quip)))
+    (doseq [quip quips]
+      (add-quip producer (:quip quip)))
     (json-response {:quips quips} 201)))
 
 (defn random-route
   [producer]
   (json-response
-   (if-let [quip (producer/get-quip file)]
+   (if-let [quip (get-quip producer)]
      {:quip quip}
      {})))
 
 (defn count-route
   [producer]
   (json-response
-   {:count (producer/count-quips file)}))
+   {:count (count-quips producer)}))
 
 (defn delete-route
   [file]
-  (producer/drop-quips file)
+  (drop-quips producer)
   {:status 204})
 
 (defn api-routes [producer]
