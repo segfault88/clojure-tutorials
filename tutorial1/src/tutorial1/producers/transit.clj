@@ -2,9 +2,9 @@
   (:require [schema.core :as s]
             [clojure.java.io :as io]
             [clojure.string :as str]
-            [cognitect.transit :as transit])
-  (:import [java.io FileInputStream FileOutputStream]
-           [tutorial1.producers Producer]))
+            [cognitect.transit :as transit]
+            [tutorial1.producers :refer [Producer]])
+  (:import [java.io FileInputStream FileOutputStream]))
 
 (defn file-exists?
   [file]
@@ -23,17 +23,6 @@
   (let [out (FileOutputStream. file false) ;; do not append, overwrite
         writer (transit/writer out :msgpack)]
     (transit/write writer {:quips quips})))
-
-
-;; (defprotocol Producer
-  ;; "A basic quip producer"
-  ;; (add-quip [this quip])
-  ;; (get-quip [this])
-  ;; (all-quips [this])
-  ;; (count-quips [this])
-  ;; (drop-quips [this]))
-
-(require '[tutorial1.producers :refer [Producer]])
 
 (deftype TransitProducer [file]
   Producer

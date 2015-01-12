@@ -2,8 +2,8 @@
 
 (defprotocol Producer
   "A basic quip producer"
-  (add-quip [this f quip])
-  (get-quip [this f])
-  (all-quips [this f])
-  (count-quips [this f])
-  (drop-quips [this f]))
+  (add-quip [this quip])
+  (get-quip [this])
+  (all-quips [this])
+  (count-quips [this])
+  (drop-quips [this]))
