@@ -29,7 +29,7 @@
   [& args :- [s/Str]]
   (let [{:keys [options arguments summary errors]} (cli/parse-opts args cli-options)
         {:keys [help port file producer]} options]
-    (println producer)
+    (println "Producer is:" producer)
     (cond
       help (do (println summary)
                (System/exit 0))

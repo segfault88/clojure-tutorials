@@ -1,7 +1,9 @@
 (ns tutorial1.producers.file
   (:require [schema.core :as s]
             [clojure.java.io :as io]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [cognitect.transit :as transit]
+            [tutorial1.producers.producer :as producer]))
 
 (defn file-exists?
   [file]
@@ -26,25 +28,28 @@
   (let [quip (escape-newlines quip)]
     (str/join [quip "\n"])))
 
-(defn add-quip
-  [file quip]
-  (spit file (format-quip quip) :append true))
+(deftype FileProducer [file]
+  producer/Producer
 
-(defn get-quip
-  [file]
-  (if (file-exists? file)
-    (unescape-newlines (rand-nth (str/split (qslurp file) #"\n")))
-    nil))
+  (add-quip
+    [this quip]
+    (spit file (format-quip quip) :append true))
 
-(defn all-quips
-  [file]
-  (map #(unescape-newlines %) (str/split (qslurp file) #"\n")))
+  (get-quip
+    [this]
+    (if (file-exists? file)
+      (unescape-newlines (rand-nth (str/split (qslurp file) #"\n")))
+      nil))
 
-(defn count-quips
-  [file]
-  (count (str/split (qslurp file) #"\n")))
+  (all-quips
+    [this]
+    (map #(unescape-newlines %) (str/split (qslurp file) #"\n")))
 
-(defn drop-quips
-  [file]
-  (if (file-exists? file)
-    (io/delete-file file true)))
+  (count-quips
+    [this]
+    (count (str/split (qslurp file) #"\n")))
+
+  (drop-quips
+    [this]
+    (if (file-exists? file)
+      (io/delete-file file true))))

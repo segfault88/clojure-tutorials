@@ -6,13 +6,9 @@
              [handler :as handler]
              [route :as route]]
             [ring.middleware.json :as json]
-            ;; [tutorial1.producers :refer [Producer]]
-            ;; [tutorial1.producers :refer :all]
             [tutorial1.producers.producer :as producer]
-            ;; [tutorial1.producers.transit :refer [TransitProducer]]
             [tutorial1.producers.transit :as transit]
-            ;; [tutorial1.producers.transit :as transit]
-            )
+            [tutorial1.producers.file :as file])
   (:import com.fasterxml.jackson.core.JsonGenerationException))
 
 (defn gulp-errors
@@ -79,6 +75,7 @@
    producer-name :- s/Str]
   (let [producer (case producer-name
                    "transit" (tutorial1.producers.transit.TransitProducer. file)
-                   ;; "file" (TransitProducer. file))]
-)]
+                   "file" (tutorial1.producers.file.FileProducer. file)
+                   :else (throw (Exception. "Invalid consumer!")))]
     (server/run-server (app producer) {:port port})))
+
